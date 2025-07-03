@@ -1,6 +1,5 @@
 
-
-@include('layout.header')
+@include('admin.app.admin_header')
     <!-- Main content -->
     <section class="content">
 
@@ -17,7 +16,7 @@
           </div>
         </div>
         <div class="card-body">
-        USER
+        ADMIN
         </div>
         <!-- /.card-body -->
         <div class="card-footer">
@@ -31,4 +30,4 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-@include('layout.footer')
+@include('admin.app.admin_footer')

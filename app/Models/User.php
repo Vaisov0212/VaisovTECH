@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Role;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use Illuminate\Database\Eloquent\Relations\HasOne;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -19,9 +20,19 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'phone',
+        'region',
+        'cllass',
         'email',
         'password',
+        'location',
+        'avatar',
+        'bio'
     ];
+    public function role():BelongsTo{
+        return $this->belongsTo(Role::class,'id','role_id');
+
+    }
 
     /**
      * The attributes that should be hidden for serialization.
