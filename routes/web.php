@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserProfileController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +18,8 @@ use App\Http\Controllers\UserController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/',[UserController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+    Route::post('/my/update', [ProfileController::class, 'infoedit'])->name('info.update');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -29,6 +32,5 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function(){
         return view('admin.admin_panel');
     });
 });
-
 
 require __DIR__.'/auth.php';

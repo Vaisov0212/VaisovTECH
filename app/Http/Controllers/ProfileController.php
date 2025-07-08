@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,16 +11,61 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+
+    public function show(){
+        return view('profile.view');
+    }
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
     {
+        // dd($request->user());
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
     }
+    public function infoedit(Request $request):RedirectResponse{
+        // dd($request);
+        //   dd('Form ishladi!', $request->all());
 
+        $request->validate([
+            'name'=>'required|min:3|max:200',
+            'phone'=>'required|min:12|max:12',
+            'bio'=>'required|max:200',
+            'location'=>'required|max:200',
+            'class'=>'required|min:1|max:2',
+               'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // $request->user()->fill($request->validated());
+       $user = auth()->user();
+       $id=$user->id;
+       $users=User::findOrFail($id);
+
+
+        $users->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'bio' => $request->bio,
+            'location' => $request->location,
+            'edu' => $request->class
+
+
+        ]);
+         if ($request->hasFile('avatar'))
+        {
+            $file = $request->file('avatar');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('avatars', $fileName, 'public'); // storage/app/public/avatars
+        }
+         if (isset($filename)) {
+              $users->save(); // avatar uchun
+            }
+
+
+          return redirect()->back()->with('success','success');
+    }
     /**
      * Update the user's profile information.
      */
