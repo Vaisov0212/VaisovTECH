@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
+
 
 class ProfileController extends Controller
 {
@@ -53,16 +56,26 @@ class ProfileController extends Controller
 
 
         ]);
-         if ($request->hasFile('avatar'))
-        {
-            $file = $request->file('avatar');
-            $fileName = time() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('avatars', $fileName, 'public'); // storage/app/public/avatars
-        }
-         if (isset($filename)) {
-              $users->save(); // avatar uchun
-            }
 
+
+    // 1. Eski faylni o‘chirish
+    if ($users->avatar) {
+        Storage::disk('public')->delete('avatars/' . $users->avatar);
+    }
+
+    // 2. Yangi faylni o‘qish va crop qilish
+    $image = Image::read($request->file('avatar'))
+        ->cover(300, 300); // markazdan crop qiladi
+
+    // 3. Fayl nomi va saqlash
+    $filename = uniqid() . '.jpg';
+    $path = 'avatars/' . $filename;
+
+    $image->toJpeg(90)->save(storage_path('app/public/' . $path));
+
+    // 4. Bazaga yozish
+    $users->avatar = $filename;
+    $users->save();
 
           return redirect()->back()->with('success','success');
     }
